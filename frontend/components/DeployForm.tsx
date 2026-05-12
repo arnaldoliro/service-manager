@@ -83,7 +83,7 @@ export default function DeployForm({ servers, onSuccess }: Props) {
           <option value="">Selecione um servidor</option>
           {servers.map((s) => (
             <option key={s.id} value={s.id}>
-              {s.hostname} (porta {s.port})
+              {s.hostname}
             </option>
           ))}
         </select>

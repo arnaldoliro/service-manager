@@ -9,7 +9,6 @@ export type Server = {
   id: number;
   hostname: string;
   username: string;
-  port: number;
   winrm_port: number;
   description?: string | null;
 };
