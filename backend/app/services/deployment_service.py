@@ -76,7 +76,7 @@ class DeploymentService:
 
     def _stop_tomcat(self) -> str:
         svc = self.app.tomcat_service_name
-        script = f'$svc = "{svc}"; Stop-Service -LiteralName $svc -Force -ErrorAction Stop'
+        script = f'$svc = "{svc}"; Stop-Service -Name $svc -Force -ErrorAction Stop'
         result = self.winrm.execute_powershell(script)
         if not result.success:
             raise Exception("Failed to stop Tomcat service")
@@ -129,7 +129,7 @@ class DeploymentService:
 
     def _start_tomcat(self) -> str:
         svc = self.app.tomcat_service_name
-        script = f'$svc = "{svc}"; Start-Service -LiteralName $svc -ErrorAction Stop'
+        script = f'$svc = "{svc}"; Start-Service -Name $svc -ErrorAction Stop'
         result = self.winrm.execute_powershell(script)
         if not result.success:
             raise Exception("Failed to start Tomcat service")
@@ -140,7 +140,7 @@ class DeploymentService:
         script = (
             f'$svc = "{svc}"; '
             f'Start-Sleep -Seconds 5; '
-            f'(Get-Service -LiteralName $svc).Status'
+            f'(Get-Service -Name $svc).Status'
         )
         result = self.winrm.execute_powershell(script)
         if "Running" not in result.stdout:
@@ -150,7 +150,7 @@ class DeploymentService:
     def _rollback(self) -> None:
         try:
             svc = self.app.tomcat_service_name
-            script = f'$svc = "{svc}"; Start-Service -LiteralName $svc -ErrorAction SilentlyContinue'
+            script = f'$svc = "{svc}"; Start-Service -Name $svc -ErrorAction SilentlyContinue'
             self.winrm.execute_powershell(script)
         except Exception:
             pass
