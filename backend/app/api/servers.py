@@ -6,7 +6,7 @@ from app.database import get_db
 from app.models.server import Server
 from app.models.audit_log import AuditLog
 from app.models.user import User
-from app.services.security import get_current_user
+from app.services.security import get_current_user, get_admin_user
 
 router = APIRouter(prefix="/api/servers", tags=["servers"])
 
@@ -53,7 +53,7 @@ def list_servers(
 def create_server(
     payload: ServerCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_admin_user),
 ):
     server = Server(**payload.model_dump())
     db.add(server)
@@ -82,7 +82,7 @@ def update_server(
     server_id: int,
     payload: ServerUpdate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_admin_user),
 ):
     server = db.query(Server).filter(Server.id == server_id).first()
     if not server:
@@ -102,7 +102,7 @@ def update_server(
 def delete_server(
     server_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_admin_user),
 ):
     server = db.query(Server).filter(Server.id == server_id).first()
     if not server:

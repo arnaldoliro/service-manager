@@ -311,6 +311,10 @@ docker-compose.local.yml
 # 13. MISCELLANEOUS PROJECT-SPECIFIC
 # =============================================================================
 
+# Security audit reports — never commit vulnerability details publicly
+SECURITY_AUDIT.md
+BUSINESS_LOGIC_SECURITY_UPDATE_PROMPT.md
+
 # Uploaded WAR files (stored temporarily during deploy, not persisted)
 *.war
 

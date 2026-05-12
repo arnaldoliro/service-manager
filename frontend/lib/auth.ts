@@ -3,9 +3,13 @@ import { TOKEN_KEY, TOKEN_COOKIE } from "./constants";
 export function saveToken(token: string) {
   if (typeof window === "undefined") return;
   localStorage.setItem(TOKEN_KEY, token);
-  // Set cookie so middleware can read it (7 days)
-  const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toUTCString();
-  document.cookie = `${TOKEN_COOKIE}=${token}; expires=${expires}; path=/; SameSite=Lax`;
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    const expiresDate = new Date(payload.exp * 1000).toUTCString();
+    document.cookie = `${TOKEN_COOKIE}=${token}; expires=${expiresDate}; path=/; SameSite=Lax`;
+  } catch {
+    document.cookie = `${TOKEN_COOKIE}=${token}; path=/; SameSite=Lax`;
+  }
 }
 
 export function getToken(): string | null {

@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
+from typing import Annotated
+from fastapi import APIRouter, Depends, HTTPException, Path
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
-from typing import Optional
 from app.database import get_db
 from app.models.server import Server
 from app.models.service import Service
@@ -12,6 +12,8 @@ from app.services.winrm_service import WinRMService
 from app.services.tomcat_service import TomcatService
 
 router = APIRouter(prefix="/api/servers", tags=["services"])
+
+SERVICE_NAME_PATTERN = r'^[A-Za-z0-9_\-\.]{1,256}$'
 
 
 class ServiceResponse(BaseModel):
@@ -52,14 +54,13 @@ def sync_services(
     tomcat = TomcatService(winrm)
 
     remote_services = tomcat.list_services()
+    existing = {
+        s.service_name: s
+        for s in db.query(Service).filter(Service.server_id == server_id).all()
+    }
     for svc in remote_services:
-        existing = (
-            db.query(Service)
-            .filter(Service.server_id == server_id, Service.service_name == svc["name"])
-            .first()
-        )
-        if existing:
-            existing.status = str(svc["status"]).lower()
+        if svc["name"] in existing:
+            existing[svc["name"]].status = str(svc["status"]).lower()
         else:
             db.add(Service(server_id=server_id, service_name=svc["name"], status=str(svc["status"]).lower()))
 
@@ -70,7 +71,7 @@ def sync_services(
 @router.post("/{server_id}/services/{service_name}/start")
 def start_service(
     server_id: int,
-    service_name: str,
+    service_name: Annotated[str, Path(pattern=SERVICE_NAME_PATTERN)],
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -82,14 +83,14 @@ def start_service(
     db.commit()
 
     if not result.success:
-        raise HTTPException(status_code=500, detail=result.stderr)
+        raise HTTPException(status_code=500, detail="Service start failed")
     return {"status": "started", "output": result.stdout}
 
 
 @router.post("/{server_id}/services/{service_name}/stop")
 def stop_service(
     server_id: int,
-    service_name: str,
+    service_name: Annotated[str, Path(pattern=SERVICE_NAME_PATTERN)],
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -101,14 +102,14 @@ def stop_service(
     db.commit()
 
     if not result.success:
-        raise HTTPException(status_code=500, detail=result.stderr)
+        raise HTTPException(status_code=500, detail="Service stop failed")
     return {"status": "stopped", "output": result.stdout}
 
 
 @router.post("/{server_id}/services/{service_name}/restart")
 def restart_service(
     server_id: int,
-    service_name: str,
+    service_name: Annotated[str, Path(pattern=SERVICE_NAME_PATTERN)],
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -120,5 +121,5 @@ def restart_service(
     db.commit()
 
     if not result.success:
-        raise HTTPException(status_code=500, detail=result.stderr)
+        raise HTTPException(status_code=500, detail="Service restart failed")
     return {"status": "restarted", "output": result.stdout}
