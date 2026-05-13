@@ -28,7 +28,6 @@ class ServerCreate(BaseModel):
     hostname: str
     username: str
     password: str
-    port: int = 8080
     winrm_port: int = 5985
     description: Optional[str] = None
 
@@ -37,7 +36,6 @@ class ServerUpdate(BaseModel):
     hostname: Optional[str] = None
     username: Optional[str] = None
     password: Optional[str] = None
-    port: Optional[int] = None
     winrm_port: Optional[int] = None
     description: Optional[str] = None
 
@@ -82,7 +80,6 @@ class ServerResponse(BaseModel):
     id: int
     hostname: str
     username: str
-    port: int
     winrm_port: int
     description: Optional[str]
 

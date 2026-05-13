@@ -24,7 +24,6 @@ export type ServerCreateRequest = {
   hostname: string;
   username: string;
   password: string;
-  port: number;
   winrm_port: number;
   description?: string;
 };

@@ -221,11 +221,11 @@ def _run_action(app_id: int, action: str, new_status: ApplicationStatus,
 
     svc = app.tomcat_service_name
     if action == "start":
-        script = f'$svc = "{svc}"; Start-Service -LiteralName $svc -ErrorAction Stop'
+        script = f'$svc = "{svc}"; Start-Service -Name $svc -ErrorAction Stop'
     elif action == "stop":
-        script = f'$svc = "{svc}"; Stop-Service -LiteralName $svc -Force -ErrorAction Stop'
+        script = f'$svc = "{svc}"; Stop-Service -Name $svc -Force -ErrorAction Stop'
     else:
-        script = f'$svc = "{svc}"; Restart-Service -LiteralName $svc -Force -ErrorAction Stop'
+        script = f'$svc = "{svc}"; Restart-Service -Name $svc -Force -ErrorAction Stop'
 
     winrm = WinRMService(server.hostname, server.username, server.password, server.winrm_port)
     result = winrm.execute_powershell(script)

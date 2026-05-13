@@ -26,7 +26,6 @@ export default function ServerTable({ servers, onEdit, onDelete }: Props) {
           <tr className="border-b border-gray-200 dark:border-gray-700 text-left text-gray-500 dark:text-gray-400">
             <th className="pb-3 font-medium pl-2">Hostname</th>
             <th className="pb-3 font-medium">Usuário</th>
-            <th className="pb-3 font-medium">Porta</th>
             <th className="pb-3 font-medium">WinRM</th>
             <th className="pb-3 font-medium">Descrição</th>
             <th className="pb-3 font-medium text-right pr-2">Ações</th>
@@ -39,7 +38,6 @@ export default function ServerTable({ servers, onEdit, onDelete }: Props) {
                 {s.hostname}
               </td>
               <td className="py-3 text-gray-600 dark:text-gray-400">{s.username}</td>
-              <td className="py-3 text-gray-600 dark:text-gray-400">{s.port}</td>
               <td className="py-3 text-gray-600 dark:text-gray-400">{s.winrm_port}</td>
               <td className="py-3 text-gray-600 dark:text-gray-400 max-w-xs truncate">
                 {s.description ?? "—"}

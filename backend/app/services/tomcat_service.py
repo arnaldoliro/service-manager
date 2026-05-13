@@ -25,7 +25,7 @@ class TomcatService:
 
     def get_status(self, service_name: str = "Tomcat9") -> str:
         name = _validate_service_name(service_name)
-        script = f'$svc = "{name}"; (Get-Service -LiteralName $svc).Status'
+        script = f'$svc = "{name}"; (Get-Service -Name $svc).Status'
         result = self.winrm.execute_powershell(script)
         if result.success:
             return result.stdout.strip().lower()
@@ -33,17 +33,17 @@ class TomcatService:
 
     def start(self, service_name: str = "Tomcat9") -> CommandResult:
         name = _validate_service_name(service_name)
-        script = f'$svc = "{name}"; Start-Service -LiteralName $svc'
+        script = f'$svc = "{name}"; Start-Service -Name $svc'
         return self.winrm.execute_powershell(script)
 
     def stop(self, service_name: str = "Tomcat9") -> CommandResult:
         name = _validate_service_name(service_name)
-        script = f'$svc = "{name}"; Stop-Service -LiteralName $svc'
+        script = f'$svc = "{name}"; Stop-Service -Name $svc'
         return self.winrm.execute_powershell(script)
 
     def restart(self, service_name: str = "Tomcat9") -> CommandResult:
         name = _validate_service_name(service_name)
-        script = f'$svc = "{name}"; Restart-Service -LiteralName $svc'
+        script = f'$svc = "{name}"; Restart-Service -Name $svc'
         return self.winrm.execute_powershell(script)
 
     def list_services(self) -> list[dict]:

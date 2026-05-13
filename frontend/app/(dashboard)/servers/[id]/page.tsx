@@ -83,7 +83,7 @@ export default function ServerDetailPage() {
               {server.hostname}
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Porta {server.port} · WinRM {server.winrm_port}
+              WinRM {server.winrm_port}
             </p>
           </div>
         </div>
@@ -96,7 +96,6 @@ export default function ServerDetailPage() {
           {[
             ["Hostname", server.hostname],
             ["Usuário", server.username],
-            ["Porta Tomcat", String(server.port)],
             ["Porta WinRM", String(server.winrm_port)],
             ["Descrição", server.description ?? "—"],
           ].map(([label, value]) => (

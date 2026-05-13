@@ -18,7 +18,6 @@ const defaultForm: ServerCreateRequest = {
   hostname: "",
   username: "",
   password: "",
-  port: 8080,
   winrm_port: 5985,
   description: "",
 };
@@ -30,7 +29,6 @@ export default function ServerForm({ server, onSuccess, onCancel }: Props) {
           hostname: server.hostname,
           username: server.username,
           password: "",
-          port: server.port,
           winrm_port: server.winrm_port,
           description: server.description ?? "",
         }
@@ -121,33 +119,18 @@ export default function ServerForm({ server, onSuccess, onCancel }: Props) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Porta Tomcat
-          </label>
-          <input
-            type="number"
-            className={inputClass}
-            value={form.port}
-            onChange={(e) => set("port", Number(e.target.value))}
-            min={1}
-            max={65535}
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Porta WinRM
-          </label>
-          <input
-            type="number"
-            className={inputClass}
-            value={form.winrm_port}
-            onChange={(e) => set("winrm_port", Number(e.target.value))}
-            min={1}
-            max={65535}
-          />
-        </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Porta WinRM
+        </label>
+        <input
+          type="number"
+          className={inputClass}
+          value={form.winrm_port}
+          onChange={(e) => set("winrm_port", Number(e.target.value))}
+          min={1}
+          max={65535}
+        />
       </div>
 
       <div>

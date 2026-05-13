@@ -33,7 +33,6 @@ class Server(Base):
     hostname = Column(String(255), nullable=False)
     username = Column(String(100), nullable=False)
     password = Column(EncryptedString(255), nullable=False)
-    port = Column(Integer, default=8080)
     winrm_port = Column(Integer, default=5985)
     description = Column(String(500), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
