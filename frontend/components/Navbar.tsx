@@ -28,6 +28,17 @@ export default function Navbar({ onMenuClick }: Props) {
       </div>
 
       <div className="ml-auto flex items-center gap-3">
+        {user?.team_name && !user.is_admin && (
+          <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-blue-100 dark:bg-blue-900/30 px-3 py-1 text-xs font-medium text-blue-700 dark:text-blue-300">
+            <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+            {user.team_name}
+          </span>
+        )}
+        {user?.is_admin && (
+          <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-purple-100 dark:bg-purple-900/30 px-3 py-1 text-xs font-medium text-purple-700 dark:text-purple-300">
+            Admin
+          </span>
+        )}
         <div className="relative">
           <button
             onClick={() => setDropdownOpen((v) => !v)}

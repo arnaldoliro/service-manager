@@ -10,11 +10,14 @@ import {
   ClipboardList,
   Settings,
   X,
+  Users,
+  ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { APP_NAME } from "@/lib/constants";
+import { useAuth } from "@/hooks/useAuth";
 
-const navItems = [
+const baseNavItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/servers", label: "Servidores", icon: Server },
   { href: "/deploy", label: "Deploy", icon: Upload },
@@ -30,6 +33,17 @@ type Props = {
 
 export default function Sidebar({ open, onClose }: Props) {
   const pathname = usePathname();
+  const { user } = useAuth();
+
+  const navItems = [
+    ...baseNavItems,
+    ...(user?.team_id && !user.is_admin
+      ? [{ href: "/my-team", label: "Meu Time", icon: Users }]
+      : []),
+    ...(user?.is_admin
+      ? [{ href: "/admin/teams", label: "Admin: Times", icon: ShieldCheck }]
+      : []),
+  ];
 
   const content = (
     <aside className="flex flex-col h-full w-64 bg-gray-900 text-gray-100">
