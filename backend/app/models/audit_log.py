@@ -10,6 +10,7 @@ class AuditLog(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     server_id = Column(Integer, ForeignKey("servers.id"), nullable=True)
+    team_id = Column(Integer, ForeignKey("teams.id"), nullable=True, index=True)
     action = Column(String(255), nullable=False)
     details = Column(Text, nullable=True)
     ip_address = Column(String(45), nullable=True)
