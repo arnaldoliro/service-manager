@@ -28,7 +28,7 @@ export default function TeamServersPage({ params }: { params: Promise<Params> })
   const { data: team, isLoading: teamLoading } = useAdminTeam(teamId);
   const { data: allServers } = useQuery<Server[]>({
     queryKey: ["servers"],
-    queryFn: () => api.get<Server[]>(ENDPOINTS.servers.list).then((r) => r.data),
+    queryFn: () => api.get<Server[]>(ENDPOINTS.servers.list()).then((r) => r.data),
     enabled: !!user?.is_admin,
   });
 

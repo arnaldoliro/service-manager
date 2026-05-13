@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Server, Upload, Activity, ClipboardList } from "lucide-react";
 import Link from "next/link";
 import { api } from "@/lib/api";
-import { ENDPOINTS } from "@/lib/constants";
+import { ENDPOINTS, DASHBOARD_ENDPOINTS } from "@/lib/constants";
 import { formatDate } from "@/lib/utils";
 import type { Server as ServerType, AuditLog } from "@/types";
 import LoadingSpinner from "@/components/LoadingSpinner";
@@ -13,7 +13,16 @@ import ServerCard from "@/components/ServerCard";
 export default function DashboardPage() {
   const { data: servers, isLoading: loadingServers } = useQuery({
     queryKey: ["servers"],
-    queryFn: () => api.get<ServerType[]>(ENDPOINTS.servers.list).then((r) => r.data),
+    queryFn: () => api.get<ServerType[]>(ENDPOINTS.servers.list()).then((r) => r.data),
+  });
+
+  const { data: activeServicesData } = useQuery({
+    queryKey: ["dashboard", "active-services-count"],
+    queryFn: () =>
+      api
+        .get<{ active_services: number }>(DASHBOARD_ENDPOINTS.activeServicesCount)
+        .then((r) => r.data)
+        .catch(() => ({ active_services: 0 })),
   });
 
   const firstServer = servers?.[0];
@@ -36,7 +45,7 @@ export default function DashboardPage() {
     },
     {
       label: "Serviços Ativos",
-      value: "—",
+      value: activeServicesData?.active_services ?? 0,
       icon: Activity,
       color: "green",
       href: "/servers",
@@ -128,7 +137,7 @@ export default function DashboardPage() {
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {servers.slice(0, 6).map((s) => (
-              <ServerCard key={s.id} server={s} />
+              <ServerCard key={s.id} server={s} showIp={false} onToggleIp={() => {}} compact />
             ))}
           </div>
         )}

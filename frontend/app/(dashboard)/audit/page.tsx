@@ -16,7 +16,7 @@ export default function AuditPage() {
 
   const { data: servers } = useQuery({
     queryKey: ["servers"],
-    queryFn: () => api.get<Server[]>(ENDPOINTS.servers.list).then((r) => r.data),
+    queryFn: () => api.get<Server[]>(ENDPOINTS.servers.list()).then((r) => r.data),
   });
 
   const { data: logs, isLoading, error } = useQuery({

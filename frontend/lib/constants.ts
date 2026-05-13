@@ -8,10 +8,11 @@ export const ENDPOINTS = {
     me: "/api/auth/me",
   },
   servers: {
-    list: "/api/servers/",
+    list: (includeHidden = false) => `/api/servers/?include_hidden=${includeHidden}`,
     create: "/api/servers/",
     get: (id: number) => `/api/servers/${id}`,
     update: (id: number) => `/api/servers/${id}`,
+    patch: (id: number) => `/api/servers/${id}`,
     delete: (id: number) => `/api/servers/${id}`,
     services: (id: number) => `/api/servers/${id}/services`,
     syncServices: (id: number) => `/api/servers/${id}/services/sync`,
@@ -25,6 +26,10 @@ export const ENDPOINTS = {
     upload: "/api/deploy/",
     history: (serverId: number) => `/api/deploy/history/${serverId}`,
   },
+};
+
+export const DASHBOARD_ENDPOINTS = {
+  activeServicesCount: "/api/dashboard/active-services-count",
 };
 
 export const TEAMS_ENDPOINTS = {

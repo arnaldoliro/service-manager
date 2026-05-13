@@ -15,7 +15,7 @@ export default function DeployPage() {
 
   const { data: servers } = useQuery({
     queryKey: ["servers"],
-    queryFn: () => api.get<Server[]>(ENDPOINTS.servers.list).then((r) => r.data),
+    queryFn: () => api.get<Server[]>(ENDPOINTS.servers.list()).then((r) => r.data),
   });
 
   const { data: history, refetch: refetchHistory, isLoading: loadingHistory } = useQuery({

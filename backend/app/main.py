@@ -7,6 +7,7 @@ from app.config import get_settings
 from app.database import engine, Base
 from app.api import auth, servers, services, deploy, logs, applications
 from app.api import teams, team_members, team_permissions
+from app.api import dashboard
 from app.middleware.team_auth import TeamAuthMiddleware
 from app.services.limiter import limiter
 
@@ -46,6 +47,7 @@ app.include_router(applications.router)
 app.include_router(teams.router)
 app.include_router(team_members.router)
 app.include_router(team_permissions.router)
+app.include_router(dashboard.router)
 
 
 @app.get("/health")

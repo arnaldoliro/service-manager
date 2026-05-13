@@ -58,9 +58,14 @@ export type TeamApplicationItem = {
 export type Server = {
   id: number;
   hostname: string;
+  name?: string | null;
   username: string;
   winrm_port: number;
   description?: string | null;
+  visible: boolean;
+  status: string;
+  memory_available?: number | null;
+  memory_total?: number | null;
 };
 
 export type Service = {

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Boolean, Column, Integer, String, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from sqlalchemy.types import TypeDecorator
@@ -31,10 +31,15 @@ class Server(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     hostname = Column(String(255), nullable=False)
+    name = Column(String(255), nullable=True)
     username = Column(String(100), nullable=False)
     password = Column(EncryptedString(255), nullable=False)
     winrm_port = Column(Integer, default=5985)
     description = Column(String(500), nullable=True)
+    visible = Column(Boolean, default=True, nullable=False, server_default="true")
+    status = Column(String(32), default="unknown", server_default="unknown")
+    memory_available = Column(Integer, nullable=True)
+    memory_total = Column(Integer, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 

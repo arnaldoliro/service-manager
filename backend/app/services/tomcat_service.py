@@ -49,7 +49,7 @@ class TomcatService:
     def list_services(self) -> list[dict]:
         result = self.winrm.execute_powershell(
             "Get-Service | Where-Object {$_.Name -like '*tomcat*' -or $_.Name -like '*catalina*'} "
-            "| Select-Object Name, Status | ConvertTo-Json"
+            "| Select-Object Name, @{N='Status';E={$_.Status.ToString()}} | ConvertTo-Json"
         )
         if result.success and result.stdout.strip():
             import json

@@ -1,7 +1,7 @@
 import re
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from pydantic import BaseModel, field_validator
 from sqlalchemy.orm import Session
 
@@ -38,6 +38,11 @@ class ServerUpdate(BaseModel):
     password: Optional[str] = None
     winrm_port: Optional[int] = None
     description: Optional[str] = None
+
+
+class ServerDisplayUpdate(BaseModel):
+    name: Optional[str] = None
+    visible: Optional[bool] = None
 
 
 class ConnectionTestRequest(BaseModel):
@@ -79,9 +84,14 @@ class ConnectionTestRequest(BaseModel):
 class ServerResponse(BaseModel):
     id: int
     hostname: str
+    name: Optional[str]
     username: str
     winrm_port: int
     description: Optional[str]
+    visible: bool
+    status: str
+    memory_available: Optional[int]
+    memory_total: Optional[int]
 
     class Config:
         from_attributes = True
@@ -89,13 +99,21 @@ class ServerResponse(BaseModel):
 
 @router.get("/", response_model=list[ServerResponse])
 def list_servers(
+    include_hidden: bool = Query(False),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     if current_user.is_admin:
-        return db.query(Server).all()
+        q = db.query(Server)
+        if not include_hidden:
+            q = q.filter(Server.visible.is_(True))
+        return q.all()
+
     from app.services.rbac_service import RBACService
-    return RBACService(db).get_filtered_servers(current_user.id)
+    servers = RBACService(db).get_filtered_servers(current_user.id)
+    if not include_hidden:
+        servers = [s for s in servers if s.visible]
+    return servers
 
 
 @router.post("/test")
@@ -186,6 +204,30 @@ def update_server(
     db.refresh(server)
     db.add(AuditLog(user_id=current_user.id, server_id=server.id, action="server_updated"))
     db.commit()
+    return server
+
+
+@router.patch("/{server_id}", response_model=ServerResponse)
+def update_server_display(
+    server_id: int,
+    payload: ServerDisplayUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    server = db.query(Server).filter(Server.id == server_id).first()
+    if not server:
+        raise HTTPException(status_code=404, detail="Servidor não encontrado")
+
+    if not current_user.is_admin:
+        from app.services.rbac_service import RBACService
+        if not RBACService(db).can_view_server(current_user.id, server_id):
+            raise HTTPException(status_code=403, detail="Acesso negado")
+
+    for field, value in payload.model_dump(exclude_none=True).items():
+        setattr(server, field, value)
+
+    db.commit()
+    db.refresh(server)
     return server
 
 
