@@ -6,6 +6,8 @@ from slowapi.errors import RateLimitExceeded
 from app.config import get_settings
 from app.database import engine, Base
 from app.api import auth, servers, services, deploy, logs, applications
+from app.api import teams, team_members, team_permissions
+from app.middleware.team_auth import TeamAuthMiddleware
 from app.services.limiter import limiter
 
 settings = get_settings()
@@ -33,6 +35,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(TeamAuthMiddleware)
 
 app.include_router(auth.router)
 app.include_router(servers.router)
@@ -40,6 +43,9 @@ app.include_router(services.router)
 app.include_router(deploy.router)
 app.include_router(logs.router)
 app.include_router(applications.router)
+app.include_router(teams.router)
+app.include_router(team_members.router)
+app.include_router(team_permissions.router)
 
 
 @app.get("/health")

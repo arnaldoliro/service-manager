@@ -45,9 +45,18 @@ def list_applications(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    query = db.query(Application)
-    if server_id:
-        query = query.filter(Application.server_id == server_id)
+    if current_user.is_admin:
+        query = db.query(Application)
+        if server_id:
+            query = query.filter(Application.server_id == server_id)
+        apps = query.all()
+    else:
+        from app.services.rbac_service import RBACService
+        rbac = RBACService(db)
+        apps = rbac.get_filtered_applications(current_user.id)
+        if server_id:
+            apps = [a for a in apps if a.server_id == server_id]
+
     return [
         {
             "id": a.id,
@@ -61,7 +70,7 @@ def list_applications(
             "server_id": a.server_id,
             "last_deployed": a.last_deployed,
         }
-        for a in query.all()
+        for a in apps
     ]
 
 

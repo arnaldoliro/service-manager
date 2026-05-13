@@ -87,7 +87,22 @@ def login(
     if not user or not verify_password(form.password, user.hashed_password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciais inválidas")
 
-    token = create_token({"sub": str(user.id)})
+    from app.models.team_member import TeamMember
+    from app.models.team import Team
+
+    primary_membership = (
+        db.query(TeamMember)
+        .join(Team)
+        .filter(TeamMember.user_id == user.id, Team.status == "active")
+        .first()
+    )
+
+    token = create_token({
+        "sub": str(user.id),
+        "role": "admin" if user.is_admin else "user",
+        "team_id": primary_membership.team_id if primary_membership else None,
+        "team_role": primary_membership.role.value if primary_membership else None,
+    })
 
     log = AuditLog(
         user_id=user.id,
@@ -102,12 +117,26 @@ def login(
 
 
 @router.get("/me")
-def me(current_user: User = Depends(get_current_user)):
+def me(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    from app.models.team_member import TeamMember
+    from app.models.team import Team
+
+    primary_membership = (
+        db.query(TeamMember)
+        .join(Team)
+        .filter(TeamMember.user_id == current_user.id, Team.status == "active")
+        .first()
+    )
+
     return {
         "id": current_user.id,
         "username": current_user.username,
         "email": current_user.email,
         "is_admin": current_user.is_admin,
+        "role": current_user.role,
+        "team_id": primary_membership.team_id if primary_membership else None,
+        "team_role": primary_membership.role.value if primary_membership else None,
+        "team_name": primary_membership.team.name if primary_membership else None,
     }
 
 

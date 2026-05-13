@@ -92,7 +92,10 @@ def list_servers(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    return db.query(Server).all()
+    if current_user.is_admin:
+        return db.query(Server).all()
+    from app.services.rbac_service import RBACService
+    return RBACService(db).get_filtered_servers(current_user.id)
 
 
 @router.post("/test")
