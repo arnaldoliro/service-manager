@@ -73,6 +73,41 @@ export type Service = {
   server_id: number;
   service_name: string;
   status: string;
+  memory_mb?: number | null;
+  start_mode?: string | null;
+  start_time?: string | null;
+};
+
+export type DiscoveredService = {
+  name: string;
+  display_name: string;
+  status: string;
+  start_mode: string | null;
+  path: string | null;
+  memory_mb: number | null;
+  start_time: string | null;
+  already_added: boolean;
+};
+
+export type ServiceHistoryEntry = {
+  id: number;
+  action: string;
+  timestamp: string | null;
+  username: string | null;
+};
+
+export type ServiceDetail = {
+  service_name: string;
+  status: string;
+  description: string | null;
+  path: string | null;
+  pid: number | null;
+  start_mode: string | null;
+  start_time: string | null;
+  memory_mb: number | null;
+  cpu_seconds: number | null;
+  history: ServiceHistoryEntry[];
+  data_source: "live" | "db";
 };
 
 export type Deployment = {
