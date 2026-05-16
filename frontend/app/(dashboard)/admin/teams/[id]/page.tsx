@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Users, Server, AppWindow, Edit, Trash2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -15,8 +15,8 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 
 type Params = { id: string };
 
-export default function TeamDetailPage({ params }: { params: Promise<Params> }) {
-  const { id } = use(params);
+export default function TeamDetailPage({ params }: { params: Params }) {
+  const { id } = params;
   const teamId = parseInt(id);
   const { user } = useAuth();
   const router = useRouter();

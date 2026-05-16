@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, UserPlus } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -17,8 +17,8 @@ import type { TeamMemberRole } from "@/types";
 
 type Params = { id: string };
 
-export default function TeamMembersPage({ params }: { params: Promise<Params> }) {
-  const { id } = use(params);
+export default function TeamMembersPage({ params }: { params: Params }) {
+  const { id } = params;
   const teamId = parseInt(id);
   const { user } = useAuth();
   const router = useRouter();

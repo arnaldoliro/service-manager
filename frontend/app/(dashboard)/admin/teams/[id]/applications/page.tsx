@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -17,8 +17,8 @@ type Params = { id: string };
 type AppItem = { id: number; app_name: string; status: string };
 const DEFAULT_PERMS = { view: true, deploy: false, restart: false };
 
-export default function TeamApplicationsPage({ params }: { params: Promise<Params> }) {
-  const { id } = use(params);
+export default function TeamApplicationsPage({ params }: { params: Params }) {
+  const { id } = params;
   const teamId = parseInt(id);
   const { user } = useAuth();
   const router = useRouter();
